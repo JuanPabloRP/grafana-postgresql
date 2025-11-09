@@ -1,0 +1,1168 @@
+{
+	"__inputs": [
+		{
+			"name": "DS_GRAFANA-POSTGRESQL-DATASOURCE",
+			"label": "grafana-postgresql-datasource",
+			"description": "",
+			"type": "datasource",
+			"pluginId": "grafana-postgresql-datasource",
+			"pluginName": "PostgreSQL"
+		}
+	],
+	"__elements": {},
+	"__requires": [
+		{
+			"type": "panel",
+			"id": "barchart",
+			"name": "Bar chart",
+			"version": ""
+		},
+		{
+			"type": "panel",
+			"id": "gauge",
+			"name": "Gauge",
+			"version": ""
+		},
+		{
+			"type": "grafana",
+			"id": "grafana",
+			"name": "Grafana",
+			"version": "12.2.1"
+		},
+		{
+			"type": "datasource",
+			"id": "grafana-postgresql-datasource",
+			"name": "PostgreSQL",
+			"version": "12.2.1"
+		},
+		{
+			"type": "panel",
+			"id": "stat",
+			"name": "Stat",
+			"version": ""
+		},
+		{
+			"type": "panel",
+			"id": "table",
+			"name": "Table",
+			"version": ""
+		},
+		{
+			"type": "panel",
+			"id": "text",
+			"name": "Text",
+			"version": ""
+		},
+		{
+			"type": "panel",
+			"id": "timeseries",
+			"name": "Time series",
+			"version": ""
+		}
+	],
+	"annotations": {
+		"list": [
+			{
+				"builtIn": 1,
+				"datasource": {
+					"type": "grafana",
+					"uid": "-- Grafana --"
+				},
+				"enable": true,
+				"hide": true,
+				"iconColor": "rgba(0, 211, 255, 1)",
+				"name": "Annotations & Alerts",
+				"type": "dashboard"
+			}
+		]
+	},
+	"editable": true,
+	"fiscalYearStartMonth": 0,
+	"graphTooltip": 0,
+	"id": null,
+	"links": [],
+	"panels": [
+		{
+			"datasource": {
+				"type": "grafana-postgresql-datasource",
+				"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"showValues": false,
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 9,
+				"w": 24,
+				"x": 0,
+				"y": 0
+			},
+			"id": 11,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "12.2.1",
+			"targets": [
+				{
+					"dataset": "postgres",
+					"editorMode": "code",
+					"format": "table",
+					"rawQuery": true,
+					"rawSql": "SELECT \r\n    TO_DATE(año || '-' || \r\n        CASE LOWER(mes)\r\n            WHEN 'enero' THEN '01'\r\n            WHEN 'febrero' THEN '02'\r\n            WHEN 'marzo' THEN '03'\r\n            WHEN 'abril' THEN '04'\r\n            WHEN 'mayo' THEN '05'\r\n            WHEN 'junio' THEN '06'\r\n            WHEN 'julio' THEN '07'\r\n            WHEN 'agosto' THEN '08'\r\n            WHEN 'septiembre' THEN '09'\r\n            WHEN 'octubre' THEN '10'\r\n            WHEN 'noviembre' THEN '11'\r\n            WHEN 'diciembre' THEN '12'\r\n        END\r\n        || '-01', 'YYYY-MM-DD'\r\n    ) AS fecha_mes,\r\n    SUM(pacas_producidas) AS total_pacas\r\nFROM RegistrosProduccion\r\nGROUP BY año, mes\r\nORDER BY año, fecha_mes;\r\n",
+					"refId": "A",
+					"sql": {
+						"columns": [
+							{
+								"parameters": [],
+								"type": "function"
+							}
+						],
+						"groupBy": [
+							{
+								"property": {
+									"type": "string"
+								},
+								"type": "groupBy"
+							}
+						],
+						"limit": 50
+					},
+					"datasource": {
+						"type": "grafana-postgresql-datasource",
+						"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+					}
+				}
+			],
+			"title": "Producción total por mes",
+			"type": "timeseries"
+		},
+		{
+			"gridPos": {
+				"h": 2,
+				"w": 24,
+				"x": 0,
+				"y": 9
+			},
+			"id": 6,
+			"options": {
+				"code": {
+					"language": "plaintext",
+					"showLineNumbers": false,
+					"showMiniMap": false
+				},
+				"content": "<center>\r\nREGISTRO DE PRODUCCIÓN\r\n</center>",
+				"mode": "markdown"
+			},
+			"pluginVersion": "12.2.1",
+			"transparent": true,
+			"type": "text"
+		},
+		{
+			"datasource": {
+				"type": "grafana-postgresql-datasource",
+				"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "green",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 3,
+				"w": 12,
+				"x": 0,
+				"y": 11
+			},
+			"id": 4,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"percentChangeColorMode": "standard",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"showPercentChange": false,
+				"textMode": "auto",
+				"wideLayout": true
+			},
+			"pluginVersion": "12.2.1",
+			"targets": [
+				{
+					"dataset": "postgres",
+					"editorMode": "code",
+					"format": "table",
+					"rawQuery": true,
+					"rawSql": "SELECT SUM(pacas_producidas) FROM registrosproduccion;",
+					"refId": "A",
+					"sql": {
+						"columns": [
+							{
+								"parameters": [],
+								"type": "function"
+							}
+						],
+						"groupBy": [
+							{
+								"property": {
+									"type": "string"
+								},
+								"type": "groupBy"
+							}
+						],
+						"limit": 50
+					},
+					"datasource": {
+						"type": "grafana-postgresql-datasource",
+						"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+					}
+				}
+			],
+			"title": "Producción total de pacas",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "grafana-postgresql-datasource",
+				"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "continuous-RdYlGr"
+					},
+					"mappings": [],
+					"max": 100,
+					"min": 0,
+					"thresholds": {
+						"mode": "percentage",
+						"steps": [
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "#6ED0E0",
+								"value": ""
+							},
+							{
+								"color": "#EAB839",
+								"value": ""
+							},
+							{
+								"color": "red",
+								"value": 70
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 6,
+				"w": 12,
+				"x": 12,
+				"y": 11
+			},
+			"id": 5,
+			"options": {
+				"minVizHeight": 31,
+				"minVizWidth": 75,
+				"orientation": "auto",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"showThresholdLabels": true,
+				"showThresholdMarkers": true,
+				"sizing": "auto",
+				"text": {
+					"percentSize": 1
+				}
+			},
+			"pluginVersion": "12.2.1",
+			"targets": [
+				{
+					"dataset": "postgres",
+					"editorMode": "code",
+					"format": "table",
+					"rawQuery": true,
+					"rawSql": "SELECT\r\n  ROUND(\r\n    (SUM(horas_trabajadas) / NULLIF(SUM(horas_trabajadas) + SUM(horas_no_trabajadas), 0)) * 100,\r\n    2\r\n  ) AS eficiencia_porcentual\r\nFROM registrosproduccion;",
+					"refId": "A",
+					"sql": {
+						"columns": [
+							{
+								"parameters": [],
+								"type": "function"
+							}
+						],
+						"groupBy": [
+							{
+								"property": {
+									"type": "string"
+								},
+								"type": "groupBy"
+							}
+						],
+						"limit": 50
+					},
+					"datasource": {
+						"type": "grafana-postgresql-datasource",
+						"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+					}
+				}
+			],
+			"title": "Indicador de eficiencia global",
+			"type": "gauge"
+		},
+		{
+			"datasource": {
+				"type": "grafana-postgresql-datasource",
+				"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"showValues": false,
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 10,
+				"w": 12,
+				"x": 0,
+				"y": 14
+			},
+			"id": 3,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "12.2.1",
+			"targets": [
+				{
+					"dataset": "postgres",
+					"editorMode": "code",
+					"format": "table",
+					"rawQuery": true,
+					"rawSql": "SELECT \r\n    fecha,\r\n    SUM(pacas_producidas) AS total_pacas\r\nFROM RegistrosProduccion\r\nGROUP BY fecha\r\nORDER BY fecha;",
+					"refId": "A",
+					"sql": {
+						"columns": [
+							{
+								"parameters": [],
+								"type": "function"
+							}
+						],
+						"groupBy": [
+							{
+								"property": {
+									"type": "string"
+								},
+								"type": "groupBy"
+							}
+						],
+						"limit": 50
+					},
+					"datasource": {
+						"type": "grafana-postgresql-datasource",
+						"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+					}
+				}
+			],
+			"title": "Monitoreo Producción Diaria",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "grafana-postgresql-datasource",
+				"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"fillOpacity": 74,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"lineWidth": 0,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 19,
+				"w": 12,
+				"x": 12,
+				"y": 17
+			},
+			"id": 2,
+			"options": {
+				"barRadius": 0.05,
+				"barWidth": 0.5,
+				"colorByField": "total_pacas",
+				"fullHighlight": false,
+				"groupWidth": 0.7,
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"orientation": "horizontal",
+				"showValue": "auto",
+				"stacking": "none",
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				},
+				"xTickLabelRotation": 0,
+				"xTickLabelSpacing": 0
+			},
+			"pluginVersion": "12.2.1",
+			"targets": [
+				{
+					"dataset": "postgres",
+					"editorMode": "code",
+					"format": "table",
+					"rawQuery": true,
+					"rawSql": "SELECT \r\n    o.nombre AS operario,\r\n    SUM(rp.pacas_producidas) AS total_pacas\r\nFROM RegistrosProduccion rp\r\nJOIN Operarios o ON rp.operario_id = o.id_operario\r\nGROUP BY o.nombre\r\nORDER BY total_pacas DESC;",
+					"refId": "A",
+					"sql": {
+						"columns": [
+							{
+								"parameters": [
+									{
+										"name": "operario_id",
+										"type": "functionParameter"
+									}
+								],
+								"type": "function"
+							}
+						],
+						"groupBy": [
+							{
+								"property": {
+									"type": "string"
+								},
+								"type": "groupBy"
+							}
+						],
+						"limit": 50
+					},
+					"table": "registrosproduccion",
+					"datasource": {
+						"type": "grafana-postgresql-datasource",
+						"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+					}
+				}
+			],
+			"title": "Producción por operario",
+			"type": "barchart"
+		},
+		{
+			"datasource": {
+				"type": "grafana-postgresql-datasource",
+				"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"fillOpacity": 80,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"lineWidth": 1,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 24
+			},
+			"id": 1,
+			"options": {
+				"barRadius": 0,
+				"barWidth": 0.76,
+				"colorByField": "maquina",
+				"fullHighlight": false,
+				"groupWidth": 0.7,
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": false
+				},
+				"orientation": "auto",
+				"showValue": "auto",
+				"stacking": "none",
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				},
+				"xField": "maquina",
+				"xTickLabelRotation": 0,
+				"xTickLabelSpacing": 0
+			},
+			"pluginVersion": "12.2.1",
+			"targets": [
+				{
+					"dataset": "postgres",
+					"datasource": {
+						"type": "grafana-postgresql-datasource",
+						"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+					},
+					"editorMode": "code",
+					"format": "table",
+					"rawQuery": true,
+					"rawSql": "SELECT \r\n    m.nombre AS maquina,\r\n    SUM(rp.pacas_producidas) AS total_pacas\r\nFROM RegistrosProduccion rp\r\nJOIN Maquinas m ON rp.maquina_id = m.id_maquina\r\nGROUP BY m.nombre\r\nORDER BY total_pacas DESC;",
+					"refId": "A",
+					"sql": {
+						"columns": [
+							{
+								"parameters": [],
+								"type": "function"
+							}
+						],
+						"groupBy": [
+							{
+								"property": {
+									"type": "string"
+								},
+								"type": "groupBy"
+							}
+						],
+						"limit": 50
+					}
+				}
+			],
+			"title": "Pacas producidas por maquina",
+			"type": "barchart"
+		},
+		{
+			"gridPos": {
+				"h": 2,
+				"w": 24,
+				"x": 0,
+				"y": 36
+			},
+			"id": 7,
+			"options": {
+				"code": {
+					"language": "plaintext",
+					"showLineNumbers": false,
+					"showMiniMap": false
+				},
+				"content": "<center>\r\n  DETALLES PAROS DE PRODUCCIÓN\r\n</center> ",
+				"mode": "html"
+			},
+			"pluginVersion": "12.2.1",
+			"transparent": true,
+			"type": "text"
+		},
+		{
+			"datasource": {
+				"type": "grafana-postgresql-datasource",
+				"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"fillOpacity": 80,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"lineWidth": 1,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					},
+					"unit": "short"
+				},
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "horas_no_trabajadas"
+						},
+						"properties": [
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "red",
+									"mode": "fixed"
+								}
+							}
+						]
+					}
+				]
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 38
+			},
+			"id": 10,
+			"options": {
+				"barRadius": 0,
+				"barWidth": 0.97,
+				"fullHighlight": false,
+				"groupWidth": 0.7,
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"orientation": "auto",
+				"showValue": "never",
+				"stacking": "none",
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				},
+				"xTickLabelRotation": 0,
+				"xTickLabelSpacing": 0
+			},
+			"pluginVersion": "12.2.1",
+			"targets": [
+				{
+					"dataset": "postgres",
+					"editorMode": "code",
+					"format": "table",
+					"rawQuery": true,
+					"rawSql": "SELECT\r\n  m.nombre AS maquina,\r\n  SUM(r.horas_trabajadas) AS horas_trabajadas,\r\n  SUM(r.horas_no_trabajadas) AS horas_no_trabajadas\r\nFROM registrosproduccion r\r\nJOIN maquinas m ON r.maquina_id = m.id_maquina\r\nGROUP BY m.nombre\r\nORDER BY m.nombre;",
+					"refId": "A",
+					"sql": {
+						"columns": [
+							{
+								"parameters": [],
+								"type": "function"
+							}
+						],
+						"groupBy": [
+							{
+								"property": {
+									"type": "string"
+								},
+								"type": "groupBy"
+							}
+						],
+						"limit": 50
+					},
+					"datasource": {
+						"type": "grafana-postgresql-datasource",
+						"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+					}
+				}
+			],
+			"title": "Horas trabajadas vs No trabajadas (por máquina)",
+			"type": "barchart"
+		},
+		{
+			"datasource": {
+				"type": "grafana-postgresql-datasource",
+				"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"fillOpacity": 80,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"lineWidth": 1,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 12,
+				"y": 38
+			},
+			"id": 9,
+			"options": {
+				"barRadius": 0,
+				"barWidth": 0.83,
+				"fullHighlight": false,
+				"groupWidth": 0.7,
+				"legend": {
+					"calcs": [],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": false
+				},
+				"orientation": "auto",
+				"showValue": "auto",
+				"stacking": "none",
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				},
+				"xTickLabelRotation": 0,
+				"xTickLabelSpacing": 0
+			},
+			"pluginVersion": "12.2.1",
+			"targets": [
+				{
+					"dataset": "postgres",
+					"editorMode": "code",
+					"format": "table",
+					"rawQuery": true,
+					"rawSql": "SELECT \r\n    area_involucrada,\r\n    SUM(horas_paro) AS total_horas\r\nFROM DetalleParosProduccion\r\nGROUP BY area_involucrada\r\nORDER BY total_horas DESC;\r\n",
+					"refId": "A",
+					"sql": {
+						"columns": [
+							{
+								"parameters": [],
+								"type": "function"
+							}
+						],
+						"groupBy": [
+							{
+								"property": {
+									"type": "string"
+								},
+								"type": "groupBy"
+							}
+						],
+						"limit": 50
+					},
+					"datasource": {
+						"type": "grafana-postgresql-datasource",
+						"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+					}
+				}
+			],
+			"title": "Paros por área involucrada",
+			"type": "barchart"
+		},
+		{
+			"datasource": {
+				"type": "grafana-postgresql-datasource",
+				"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "auto",
+						"cellOptions": {
+							"type": "auto"
+						},
+						"footer": {
+							"reducers": []
+						},
+						"inspect": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 9,
+				"w": 24,
+				"x": 0,
+				"y": 46
+			},
+			"id": 8,
+			"options": {
+				"cellHeight": "sm",
+				"showHeader": true
+			},
+			"pluginVersion": "12.2.1",
+			"targets": [
+				{
+					"dataset": "postgres",
+					"editorMode": "code",
+					"format": "table",
+					"rawQuery": true,
+					"rawSql": "SELECT\r\n  r.fecha,\r\n  m.nombre AS maquina,\r\n  d.codigo_paro,\r\n  d.horas_paro,\r\n  d.area_involucrada,\r\n  d.personal_involucrado,\r\n  d.observaciones_paro\r\nFROM detalleparosproduccion d\r\nJOIN registrosproduccion r ON d.registro_id = r.id_registro\r\nJOIN maquinas m ON r.maquina_id = m.id_maquina\r\nORDER BY r.fecha DESC\r\nLIMIT 20;\r\n",
+					"refId": "A",
+					"sql": {
+						"columns": [
+							{
+								"parameters": [],
+								"type": "function"
+							}
+						],
+						"groupBy": [
+							{
+								"property": {
+									"type": "string"
+								},
+								"type": "groupBy"
+							}
+						],
+						"limit": 50
+					},
+					"datasource": {
+						"type": "grafana-postgresql-datasource",
+						"uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+					}
+				}
+			],
+			"title": "Detalle de los últimos paros",
+			"type": "table"
+		}
+	],
+	"schemaVersion": 42,
+	"tags": [],
+	"templating": {
+		"list": [
+			{
+				"allowCustomValue": true,
+				"current": {},
+				"definition": "SELECT nombre FROM Maquinas;\n",
+				"hide": 2,
+				"includeAll": true,
+				"multi": true,
+				"name": "maquina",
+				"options": [],
+				"query": "SELECT nombre FROM Maquinas;\n",
+				"refresh": 1,
+				"regex": "",
+				"type": "query"
+			},
+			{
+				"allowCustomValue": true,
+				"current": {},
+				"definition": "SELECT nombre FROM Operarios;\n",
+				"hide": 2,
+				"includeAll": true,
+				"multi": true,
+				"name": "operario",
+				"options": [],
+				"query": "SELECT nombre FROM Operarios;\n",
+				"refresh": 1,
+				"regex": "",
+				"type": "query"
+			},
+			{
+				"allowCustomValue": true,
+				"current": {},
+				"definition": "SELECT DISTINCT año FROM registrosproduccion ORDER BY año;\n",
+				"hide": 2,
+				"includeAll": true,
+				"multi": true,
+				"name": "anio",
+				"options": [],
+				"query": "SELECT DISTINCT año FROM registrosproduccion ORDER BY año;\n",
+				"refresh": 1,
+				"regex": "",
+				"type": "query"
+			},
+			{
+				"allowCustomValue": true,
+				"current": {},
+				"definition": "SELECT DISTINCT mes FROM RegistrosProduccion ORDER BY \n    CASE LOWER(mes)\n        WHEN 'enero' THEN 1 WHEN 'febrero' THEN 2 WHEN 'marzo' THEN 3\n        WHEN 'abril' THEN 4 WHEN 'mayo' THEN 5 WHEN 'junio' THEN 6\n        WHEN 'julio' THEN 7 WHEN 'agosto' THEN 8 WHEN 'septiembre' THEN 9\n        WHEN 'octubre' THEN 10 WHEN 'noviembre' THEN 11 WHEN 'diciembre' THEN 12\n    END;",
+				"hide": 2,
+				"includeAll": true,
+				"multi": true,
+				"name": "mes",
+				"options": [],
+				"query": "SELECT DISTINCT mes FROM RegistrosProduccion ORDER BY \n    CASE LOWER(mes)\n        WHEN 'enero' THEN 1 WHEN 'febrero' THEN 2 WHEN 'marzo' THEN 3\n        WHEN 'abril' THEN 4 WHEN 'mayo' THEN 5 WHEN 'junio' THEN 6\n        WHEN 'julio' THEN 7 WHEN 'agosto' THEN 8 WHEN 'septiembre' THEN 9\n        WHEN 'octubre' THEN 10 WHEN 'noviembre' THEN 11 WHEN 'diciembre' THEN 12\n    END;",
+				"refresh": 1,
+				"regex": "",
+				"type": "query"
+			}
+		]
+	},
+	"time": {
+		"from": "2023-09-12T12:00:00.000Z",
+		"to": "2025-11-20T12:00:00.000Z"
+	},
+	"timepicker": {},
+	"timezone": "browser",
+	"title": "PRODUCCIÓN TEMPERAS Y VINILOS",
+	"uid": "adczgct",
+	"version": 32,
+	"weekStart": ""
+}
