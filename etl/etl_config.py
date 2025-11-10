@@ -15,9 +15,32 @@ DB_NAME = "produccion_db"
 
 # Cadena de conexión SQLAlchemy
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-engine = create_engine(DATABASE_URL)
 
 EXCEL_PATH = "data/SEGUIMIENTO TEMPERAS Y VINILOS Actividad.xlsm"
+engine = create_engine(DATABASE_URL)
+
+
+def limpiar_tablas(engine):
+    """Elimina datos de las tablas si existen."""
+    with engine.begin() as conn:
+        print("🧹 Verificando tablas existentes para limpiar registros...")
+        tablas = conn.execute(text("""
+            SELECT table_name
+            FROM information_schema.tables
+            WHERE table_schema = 'public';
+        """)).fetchall()
+
+        if not tablas:
+            print("⚠️ No existen tablas. Se crearán nuevas.")
+            return False
+
+        for (tabla,) in tablas:
+            conn.execute(text(f"TRUNCATE TABLE {tabla} RESTART IDENTITY CASCADE;"))
+        print("✅ Tablas vaciadas correctamente.\n")
+
+        return True
+
+limpiar_tablas(engine)
 
 # ============================
 # 🧾 LECTURA Y LIMPIEZA
@@ -42,7 +65,6 @@ print(f"✅ Datos cargados ({len(df)} filas)\n")
 def obtener_o_insertar(tabla, campo_nombre, valor):
     if not valor:
         return None
-
     id_campo = f"id_{tabla[:-1].lower()}"
     with engine.begin() as conn:
         res = conn.execute(text(f"SELECT {id_campo} FROM {tabla} WHERE nombre = :v"), {"v": valor}).fetchone()
@@ -75,8 +97,10 @@ print(f"✅ Dimensiones cargadas ({len(maquina_map)} máquinas, {len(operario_ma
 # ============================
 
 print("📦 Insertando registros de producción...")
+registros_insertados = []  # Guardará (índice, id_registro)
+
 with engine.begin() as conn:
-    for _, row in df.iterrows():
+    for i, row in df.iterrows():
         registro = {
             "fecha": row["Fecha"].date().isoformat() if row["Fecha"] else None,
             "mes": row["Mes"],
@@ -92,8 +116,7 @@ with engine.begin() as conn:
             "observaciones": row["Observaciones"],
         }
 
-        # Inserta el registro
-        conn.execute(text("""
+        result = conn.execute(text("""
             INSERT INTO registrosproduccion (
                 fecha, mes, año, maquina_id, operario_id, referencia_id,
                 pacas_producidas, horas_trabajadas, horas_no_trabajadas,
@@ -103,8 +126,52 @@ with engine.begin() as conn:
                 :pacas_producidas, :horas_trabajadas, :horas_no_trabajadas,
                 :turno, :tiempo_total_paros, :observaciones
             )
+            RETURNING id_registro
         """), registro)
 
-print("✅ Registros insertados correctamente en registrosproduccion.")
+        id_registro = result.scalar()
+        registros_insertados.append((i, id_registro))
 
+print("✅ Registros insertados correctamente en registrosproduccion.\n")
+
+# ============================
+# ⚙️ INSERTAR DETALLE DE PAROS
+# ============================
+
+print("⚙️ Insertando detalles de paros...")
+
+with engine.begin() as conn:
+    for i, id_registro in registros_insertados:
+        row = df.iloc[i]
+        for n in range(1, 19):  # Hasta 18 códigos de paro
+            codigo_col = f"Codigo de paro {n}"
+            horas_col = f"Codigo {n} en horas"
+            sub_col = f"Sub Codigo de paro {n}" if f"Sub Codigo de paro {n}" in df.columns else None
+
+            if row.get(codigo_col):
+                detalle = {
+                    "registro_id": id_registro,
+                    "codigo_paro": str(row[codigo_col]),
+                    "subcodigo": row.get(sub_col),
+                    "tipo_paro": row.get("Tipo de paro"),
+                    "horas_paro": row.get(horas_col),
+                    "area_involucrada": row.get("Área involucrada en subcodigo 5"),
+                    "personal_involucrado": row.get("Personal involucrado"),
+                    "observaciones_paro": row.get("Observaciones de paro"),
+                }
+
+                try:
+                    conn.execute(text("""
+                        INSERT INTO detalleparosproduccion (
+                            registro_id, codigo_paro, subcodigo, tipo_paro,
+                            horas_paro, area_involucrada, personal_involucrado, observaciones_paro
+                        ) VALUES (
+                            :registro_id, :codigo_paro, :subcodigo, :tipo_paro,
+                            :horas_paro, :area_involucrada, :personal_involucrado, :observaciones_paro
+                        )
+                    """), detalle)
+                except Exception as e:
+                    print(f"⚠️ Error insertando detalle fila {i}: {e}")
+
+print("✅ Detalle de paros insertado correctamente.")
 print("🎯 ETL finalizado con éxito.")

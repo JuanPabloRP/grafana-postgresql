@@ -46,7 +46,7 @@ CREATE TABLE DetalleParosProduccion (
     registro_id INT REFERENCES RegistrosProduccion(id_registro) ON DELETE CASCADE,
     codigo_paro VARCHAR(20),
     subcodigo VARCHAR(50),
-    tipo_paro VARCHAR(50),
+    tipo_paro VARCHAR(100),
     horas_paro NUMERIC(5,2),
     area_involucrada VARCHAR(50),
     personal_involucrado VARCHAR(100),

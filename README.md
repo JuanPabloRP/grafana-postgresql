@@ -74,3 +74,8 @@ El proceso ETL se implementa en los archivos `etl/etl_config.py` y `etl/etl_watc
 - `etl_watcher.py`: este script supervisa los cambios en el archivo de Excel y activa el proceso ETL cuando se modifica el archivo.
 
 El proceso ETL está diseñado para ser idempotente, lo que significa que se puede ejecutar varias veces sin crear entradas duplicadas en la base de datos.
+
+
+# ...
+Connection URL
+postgres:5432
